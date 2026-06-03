@@ -240,13 +240,15 @@ function callBackend(content) {
   return JSON.parse(text);
 }
 
-/** Crea (si no existe) y aplica una etiqueta de Gmail al hilo del correo. */
+/** Crea (si no existe), aplica una etiqueta de Gmail y archiva el correo. */
 function applyGmailLabel(message, labelName) {
   var label = GmailApp.getUserLabelByName(labelName);
   if (!label) {
     label = GmailApp.createLabel(labelName);
   }
-  message.getThread().addLabel(label);
+  var thread = message.getThread();
+  thread.addLabel(label);
+  thread.moveToArchive(); // Archiva el correo (lo quita de Inbox).
 }
 
 /* ----------------------------- Configuración ----------------------------- */
