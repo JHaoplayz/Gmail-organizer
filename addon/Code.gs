@@ -13,84 +13,127 @@
 /** Página de inicio del Add-on (sin un correo abierto). */
 function onHomepage(e) {
   var card = CardService.newCardBuilder()
-    .setHeader(CardService.newCardHeader().setTitle('Clasificador con Claude'));
+    .setHeader(CardService.newCardHeader().setTitle('Organizador de correos'));
 
-  var section = CardService.newCardSection();
-  if (!isConfigured()) {
-    section.addWidget(
-      CardService.newTextParagraph().setText(
-        '⚠️ Aún no has configurado el Add-on. Pulsa <b>Configuración</b> para añadir la URL del backend y el secreto.'
-      )
-    );
-    section.addWidget(
+  // Sección 1: clasificación por lotes (reglas, gratis).
+  var batch = CardService.newCardSection().setHeader('Clasificar la bandeja');
+  batch.addWidget(
+    CardService.newTextParagraph().setText(
+      'El modo <b>reglas</b> es gratis y no necesita configuración. Etiqueta tus correos buscando patrones (remitente y palabras clave).'
+    )
+  );
+  batch.addWidget(
+    CardService.newTextButton()
+      .setText('Clasificar 50 correos recientes (reglas)')
+      .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
+      .setOnClickAction(CardService.newAction().setFunctionName('runBatchNow'))
+  );
+  if (isAutoEnabled()) {
+    batch.addWidget(CardService.newTextParagraph().setText('🔁 Clasificación automática: <b>activada</b> (cada hora).'));
+    batch.addWidget(
       CardService.newTextButton()
-        .setText('Configuración')
-        .setOnClickAction(CardService.newAction().setFunctionName('onSettings'))
+        .setText('Desactivar automático')
+        .setOnClickAction(CardService.newAction().setFunctionName('disableAutoClassify'))
     );
   } else {
-    section.addWidget(
+    batch.addWidget(
+      CardService.newTextButton()
+        .setText('Activar clasificación automática (cada hora)')
+        .setOnClickAction(CardService.newAction().setFunctionName('setupAutoClassify'))
+    );
+  }
+  card.addSection(batch);
+
+  // Sección 2: estado de la IA (opcional).
+  var ai = CardService.newCardSection().setHeader('Modo IA (Claude)');
+  if (isConfigured()) {
+    ai.addWidget(CardService.newTextParagraph().setText('✅ Backend configurado. Al abrir un correo puedes clasificar con Claude.'));
+  } else {
+    ai.addWidget(
       CardService.newTextParagraph().setText(
-        'Abre cualquier correo y pulsa <b>Clasificar y etiquetar</b> para organizarlo automáticamente con Claude.'
+        'Opcional: conecta el backend de Claude para clasificación con IA (más precisa). Mientras tanto, el modo reglas ya funciona.'
       )
     );
   }
+  ai.addWidget(
+    CardService.newTextButton()
+      .setText('Configuración')
+      .setOnClickAction(CardService.newAction().setFunctionName('onSettings'))
+  );
+  card.addSection(ai);
 
-  return card.addSection(section).build();
+  return card.build();
 }
 
 /** Se ejecuta al abrir un correo. Construye la tarjeta contextual. */
 function onGmailMessage(e) {
-  if (!isConfigured()) {
-    return onHomepage(e);
-  }
-
   var card = CardService.newCardBuilder()
     .setHeader(CardService.newCardHeader().setTitle('Clasificar correo'));
 
-  var section = CardService.newCardSection();
-  section.addWidget(
-    CardService.newTextParagraph().setText('Usa Claude para asignar una categoría y aplicar la etiqueta correspondiente.')
-  );
-
-  var classifyAction = CardService.newAction().setFunctionName('classifyAndLabel');
-  section.addWidget(
+  // Modo reglas: siempre disponible, gratis.
+  var rulesSection = CardService.newCardSection().setHeader('Modo reglas (gratis)');
+  rulesSection.addWidget(
     CardService.newTextButton()
-      .setText('Clasificar y etiquetar')
+      .setText('Clasificar y etiquetar (reglas)')
       .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-      .setOnClickAction(classifyAction)
+      .setOnClickAction(CardService.newAction().setFunctionName('classifyAndLabelRules'))
   );
-
-  var previewAction = CardService.newAction().setFunctionName('classifyOnly');
-  section.addWidget(
+  rulesSection.addWidget(
     CardService.newTextButton()
-      .setText('Solo previsualizar categoría')
-      .setOnClickAction(previewAction)
+      .setText('Solo previsualizar (reglas)')
+      .setOnClickAction(CardService.newAction().setFunctionName('classifyOnlyRules'))
   );
+  card.addSection(rulesSection);
 
-  return card.addSection(section).build();
+  // Modo IA: solo si el backend está configurado.
+  if (isConfigured()) {
+    var aiSection = CardService.newCardSection().setHeader('Modo IA (Claude)');
+    aiSection.addWidget(
+      CardService.newTextButton()
+        .setText('Clasificar y etiquetar (Claude)')
+        .setOnClickAction(CardService.newAction().setFunctionName('classifyAndLabelClaude'))
+    );
+    aiSection.addWidget(
+      CardService.newTextButton()
+        .setText('Solo previsualizar (Claude)')
+        .setOnClickAction(CardService.newAction().setFunctionName('classifyOnlyClaude'))
+    );
+    card.addSection(aiSection);
+  }
+
+  return card.build();
 }
 
 /* ------------------------------- Acciones -------------------------------- */
 
-/** Clasifica el correo abierto y aplica la etiqueta sugerida. */
-function classifyAndLabel(e) {
-  return handleClassification(e, true);
-}
+/** Acciones de la tarjeta contextual (combinaciones método × aplicar). */
+function classifyAndLabelRules(e) { return handleClassification(e, true, 'rules'); }
+function classifyOnlyRules(e) { return handleClassification(e, false, 'rules'); }
+function classifyAndLabelClaude(e) { return handleClassification(e, true, 'claude'); }
+function classifyOnlyClaude(e) { return handleClassification(e, false, 'claude'); }
 
-/** Clasifica el correo abierto sin aplicar la etiqueta (solo muestra el resultado). */
-function classifyOnly(e) {
-  return handleClassification(e, false);
+/**
+ * Devuelve la clasificación según el método elegido.
+ * @param {Object} content {subject, from, body}
+ * @param {string} method 'rules' | 'claude'
+ */
+function classifyDispatch(content, method) {
+  if (method === 'claude') {
+    return callBackend(content);
+  }
+  return classifyWithRulesEngine(content);
 }
 
 /**
  * Lógica compartida de clasificación.
  * @param {Object} e Evento del Add-on de Gmail.
  * @param {boolean} applyLabel Si se debe aplicar la etiqueta en Gmail.
+ * @param {string} method 'rules' | 'claude'.
  */
-function handleClassification(e, applyLabel) {
+function handleClassification(e, applyLabel, method) {
   try {
     var content = getMessageContent(e);
-    var result = callBackend(content);
+    var result = classifyDispatch(content, method);
 
     var statusText = '';
     if (applyLabel) {
@@ -118,13 +161,12 @@ function handleClassification(e, applyLabel) {
     );
 
     if (!applyLabel) {
-      var applyAction = CardService.newAction()
-        .setFunctionName('classifyAndLabel');
+      var applyFn = method === 'claude' ? 'classifyAndLabelClaude' : 'classifyAndLabelRules';
       section.addWidget(
         CardService.newTextButton()
           .setText('Aplicar esta etiqueta')
           .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
-          .setOnClickAction(applyAction)
+          .setOnClickAction(CardService.newAction().setFunctionName(applyFn))
       );
     }
 
@@ -198,13 +240,15 @@ function callBackend(content) {
   return JSON.parse(text);
 }
 
-/** Crea (si no existe) y aplica una etiqueta de Gmail al hilo del correo. */
+/** Crea (si no existe), aplica una etiqueta de Gmail y archiva el correo. */
 function applyGmailLabel(message, labelName) {
   var label = GmailApp.getUserLabelByName(labelName);
   if (!label) {
     label = GmailApp.createLabel(labelName);
   }
-  message.getThread().addLabel(label);
+  var thread = message.getThread();
+  thread.addLabel(label);
+  thread.moveToArchive(); // Archiva el correo (lo quita de Inbox).
 }
 
 /* ----------------------------- Configuración ----------------------------- */
@@ -254,6 +298,99 @@ function saveSettings(e) {
   return CardService.newActionResponseBuilder()
     .setNotification(CardService.newNotification().setText('Configuración guardada.'))
     .setNavigation(CardService.newNavigation().popToRoot())
+    .build();
+}
+
+/* --------------------- Clasificación por lotes (reglas) ------------------- */
+
+var AUTO_HANDLER = 'autoClassifyInbox';
+var BATCH_LABEL_PREFIX = 'Claude/';
+
+/** ¿Hay un disparador automático activo? */
+function isAutoEnabled() {
+  var triggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === AUTO_HANDLER) return true;
+  }
+  return false;
+}
+
+/** Botón "Clasificar X correos recientes": procesa la bandeja ahora. */
+function runBatchNow(e) {
+  var count = classifyInboxThreads(GmailApp.getInboxThreads(0, 50));
+  return CardService.newActionResponseBuilder()
+    .setNotification(
+      CardService.newNotification().setText('Listo: ' + count + ' correos etiquetados con reglas.')
+    )
+    .build();
+}
+
+/** Función ejecutada por el disparador horario. */
+function autoClassifyInbox() {
+  // Solo correos del último día para no reprocesar toda la bandeja cada hora.
+  var threads = GmailApp.search('in:inbox newer_than:1d', 0, 50);
+  classifyInboxThreads(threads);
+}
+
+/**
+ * Clasifica y etiqueta una lista de hilos con el motor de reglas.
+ * Omite los que ya tengan una etiqueta del organizador.
+ * @return {number} cuántos hilos se etiquetaron.
+ */
+function classifyInboxThreads(threads) {
+  var processed = 0;
+  for (var i = 0; i < threads.length; i++) {
+    var thread = threads[i];
+    if (hasOrganizerLabel(thread)) continue;
+
+    var messages = thread.getMessages();
+    if (!messages.length) continue;
+    var msg = messages[messages.length - 1]; // mensaje más reciente del hilo
+
+    var result = classifyWithRulesEngine({
+      subject: msg.getSubject(),
+      from: msg.getFrom(),
+      body: msg.getPlainBody(),
+    });
+
+    var label = GmailApp.getUserLabelByName(result.label) || GmailApp.createLabel(result.label);
+    thread.addLabel(label);
+    processed++;
+  }
+  return processed;
+}
+
+/** ¿El hilo ya tiene una etiqueta del organizador? */
+function hasOrganizerLabel(thread) {
+  var labels = thread.getLabels();
+  for (var i = 0; i < labels.length; i++) {
+    if (labels[i].getName().indexOf(BATCH_LABEL_PREFIX) === 0) return true;
+  }
+  return false;
+}
+
+/** Activa la clasificación automática horaria. */
+function setupAutoClassify(e) {
+  if (!isAutoEnabled()) {
+    ScriptApp.newTrigger(AUTO_HANDLER).timeBased().everyHours(1).create();
+  }
+  return CardService.newActionResponseBuilder()
+    .setNotification(CardService.newNotification().setText('Clasificación automática activada (cada hora).'))
+    .setNavigation(CardService.newNavigation().updateCard(onHomepage(e)))
+    .build();
+}
+
+/** Desactiva la clasificación automática. */
+function disableAutoClassify(e) {
+  var triggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === AUTO_HANDLER) {
+      ScriptApp.deleteTrigger(triggers[i]);
+    }
+  }
+  return CardService.newActionResponseBuilder()
+    .setNotification(CardService.newNotification().setText('Clasificación automática desactivada.'))
+    .setNavigation(CardService.newNavigation().updateCard(onHomepage(e)))
     .build();
 }
 
