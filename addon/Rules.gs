@@ -187,6 +187,7 @@ var RULES = [
  * @return {{categoryId:string, label:string, confidence:number, reasoning:string}}
  */
 function classifyWithRulesEngine(content) {
+  content = content || {};
   var from = (content.from || '').toLowerCase();
   var haystack = ((content.subject || '') + ' ' + (content.body || '')).toLowerCase();
 
@@ -241,4 +242,26 @@ function classifyWithRulesEngine(content) {
     confidence: confidence,
     reasoning: 'Coincidencias: ' + bestHits.slice(0, 4).join(', ') + '.',
   };
+}
+
+/**
+ * Función de PRUEBA: ejecútala desde el editor (botón "Ejecutar") para verificar
+ * que el motor de reglas funciona. Mira el resultado en "Registro de ejecución".
+ */
+function testRulesEngine() {
+  var ejemplos = [
+    { subject: '50% de descuento solo hoy', from: 'ofertas@zara.com', body: 'Aprovecha nuestras rebajas en ropa.' },
+    { subject: 'Tu paquete está en camino', from: 'noreply@dhl.com', body: 'Número de seguimiento: 123. Salió a reparto.' },
+    { subject: 'Estado de cuenta de mayo', from: 'avisos@bbva.com', body: 'Consulta tu factura y movimientos.' },
+    { subject: 'Tu suscripción se renovará', from: 'info@netflix.com', body: 'Tu plan mensual se renovará pronto.' },
+    { subject: 'Hola, ¿comemos el sábado?', from: 'amigo@gmail.com', body: 'Te escribo para vernos.' },
+  ];
+
+  for (var i = 0; i < ejemplos.length; i++) {
+    var r = classifyWithRulesEngine(ejemplos[i]);
+    Logger.log(
+      '"' + ejemplos[i].subject + '" → ' + r.label +
+      ' (' + Math.round(r.confidence * 100) + '%) | ' + r.reasoning
+    );
+  }
 }
