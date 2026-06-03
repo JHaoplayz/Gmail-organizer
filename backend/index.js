@@ -17,7 +17,7 @@ const functions = require('@google-cloud/functions-framework');
 // El SDK toma ANTHROPIC_API_KEY del entorno. No incrustes la clave en el código.
 const client = new Anthropic();
 
-const MODEL = 'claude-opus-4-8';
+const MODEL = 'claude-haiku-4-5';
 
 /**
  * Taxonomía de categorías. `label` es el nombre exacto de la etiqueta que el
