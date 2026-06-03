@@ -27,8 +27,8 @@ automáticamente usando la **API de Claude**. La clasificación se ejecuta en un
 2. El Add-on envía asunto, remitente y cuerpo a la Cloud Function.
 3. La función llama a Claude (`claude-opus-4-8`) con **salida estructurada** y
    **cacheo de prompts**, y devuelve una categoría.
-4. El Add-on crea/aplica la etiqueta correspondiente (`Claude/Promociones`,
-   `Claude/Spam`, etc.).
+4. El Add-on crea/aplica la etiqueta correspondiente (`Promociones`,
+   `Spam`, etc.) y archiva el correo (lo saca de Inbox).
 
 ## Estructura
 

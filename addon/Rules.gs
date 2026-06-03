@@ -16,7 +16,7 @@
 var RULES = [
   {
     id: 'spam',
-    label: 'Claude/Spam',
+    label: 'Spam',
     senderPatterns: [/no-?reply.*lottery/i, /winner/i, /prize/i],
     keywords: [
       'has ganado', 'ganaste', 'premio', 'lotería', 'loteria', 'herencia',
@@ -27,7 +27,7 @@ var RULES = [
   },
   {
     id: 'promociones',
-    label: 'Claude/Promociones',
+    label: 'Promociones',
     senderPatterns: [
       /newsletter/i, /noreply@.*(shop|store|tienda|moda|fashion)/i,
       /(zara|hm|shein|nike|adidas|bershka|pullbear|amazon|aliexpress|mercadolibre)/i,
@@ -41,7 +41,7 @@ var RULES = [
   },
   {
     id: 'noticias',
-    label: 'Claude/Noticias',
+    label: 'Noticias',
     senderPatterns: [
       /(news|noticias|periodico|periódico|diario|times|post|herald|elpais|elmundo|bbc|cnn|reuters)/i,
       /newsletter@/i,
@@ -54,7 +54,7 @@ var RULES = [
   },
   {
     id: 'confirmaciones',
-    label: 'Claude/Confirmaciones',
+    label: 'Confirmaciones',
     // OJO: no usamos /no-?reply/ porque casi todo correo automático lo lleva y
     // ensuciaría esta categoría. Solo remitentes específicos de pedidos.
     senderPatterns: [/pedidos?@/i, /orders?@/i, /receipts?@/i, /facturacion@/i],
@@ -70,7 +70,7 @@ var RULES = [
   },
   {
     id: 'finanzas',
-    label: 'Claude/Finanzas',
+    label: 'Finanzas',
     senderPatterns: [
       /(bank|banco|bbva|santander|caixa|paypal|stripe|visa|mastercard|hacienda|sat)/i,
       /(robinhood|coinbase|binance|kraken|etrade|fidelity|schwab|revolut|wise|n26|wealthsimple)/i,
@@ -84,7 +84,7 @@ var RULES = [
   },
   {
     id: 'redes_sociales',
-    label: 'Claude/Redes Sociales',
+    label: 'Redes Sociales',
     senderPatterns: [
       /(facebook|instagram|twitter|x\.com|linkedin|tiktok|youtube|reddit|discord|pinterest)/i,
     ],
@@ -96,7 +96,7 @@ var RULES = [
   },
   {
     id: 'trabajo',
-    label: 'Claude/Trabajo',
+    label: 'Trabajo',
     senderPatterns: [/(jira|asana|slack|notion|trello|workspace|teams)/i],
     keywords: [
       'reunión', 'reunion', 'meeting', 'proyecto', 'informe', 'reporte', 'deadline',
@@ -106,7 +106,7 @@ var RULES = [
   },
   {
     id: 'viajes',
-    label: 'Claude/Viajes',
+    label: 'Viajes',
     senderPatterns: [
       /(booking|despegar|expedia|airbnb|kayak|skyscanner|iberia|vueling|ryanair|latam|aeromexico|avianca|trivago|hotels?\.com|renfe|trip\.com)/i,
     ],
@@ -118,7 +118,7 @@ var RULES = [
   },
   {
     id: 'envios',
-    label: 'Claude/Envíos',
+    label: 'Envíos',
     senderPatterns: [/(dhl|fedex|ups|correos|seur|estafeta|mrw|usps|paquet|glovo|amazon\.logistics)/i],
     keywords: [
       'tu paquete', 'en camino', 'en reparto', 'ha sido entregado', 'número de seguimiento',
@@ -128,7 +128,7 @@ var RULES = [
   },
   {
     id: 'eventos',
-    label: 'Claude/Eventos',
+    label: 'Eventos',
     senderPatterns: [/(calendar|eventbrite|meetup|webinar|zoom\.us)/i],
     keywords: [
       'te ha invitado', 'invitación a', 'invitacion a', 'webinar', 'entradas para',
@@ -138,7 +138,7 @@ var RULES = [
   },
   {
     id: 'educacion',
-    label: 'Claude/Educación',
+    label: 'Educación',
     senderPatterns: [
       /(coursera|udemy|edx|platzi|domestika|khanacademy|duolingo|datacamp|codecademy|pluralsight|freecodecamp|kaggle|university|universidad|campus|moodle|classroom)/i,
     ],
@@ -150,7 +150,7 @@ var RULES = [
   },
   {
     id: 'salud',
-    label: 'Claude/Salud',
+    label: 'Salud',
     senderPatterns: [/(clinic|clínica|clinica|hospital|farmacia|pharmacy|doctoralia|sanitas|adeslas|laboratorio)/i],
     keywords: [
       'cita médica', 'cita medica', 'resultados de', 'análisis', 'analisis', 'receta',
@@ -160,7 +160,7 @@ var RULES = [
   },
   {
     id: 'suscripciones',
-    label: 'Claude/Suscripciones',
+    label: 'Suscripciones',
     senderPatterns: [
       /(netflix|spotify|disney|hbo|max|primevideo|apple|icloud|adobe|microsoft|dropbox|notion|patreon)/i,
     ],
@@ -173,7 +173,7 @@ var RULES = [
   },
   {
     id: 'empleo',
-    label: 'Claude/Empleo',
+    label: 'Empleo',
     senderPatterns: [
       /(linkedin|indeed|glassdoor|infojobs|jobs|talent|recruiting|workday|greenhouse|lever)/i,
     ],
@@ -231,7 +231,7 @@ function classifyWithRulesEngine(content) {
   if (!best || bestScore === 0) {
     return {
       categoryId: 'otros',
-      label: 'Claude/Otros',
+      label: 'Otros',
       confidence: 0.3,
       reasoning: 'No se encontraron patrones reconocibles.',
     };

@@ -24,7 +24,7 @@ function onHomepage(e) {
   );
   batch.addWidget(
     CardService.newTextButton()
-      .setText('Clasificar 50 correos recientes (reglas)')
+      .setText('Clasificar y archivar la bandeja (reglas)')
       .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
       .setOnClickAction(CardService.newAction().setFunctionName('runBatchNow'))
   );
@@ -304,7 +304,16 @@ function saveSettings(e) {
 /* --------------------- Clasificación por lotes (reglas) ------------------- */
 
 var AUTO_HANDLER = 'autoClassifyInbox';
-var BATCH_LABEL_PREFIX = 'Claude/';
+
+/** Conjunto de nombres de etiqueta que crea el organizador (desde RULES). */
+function organizerLabelSet() {
+  var set = {};
+  for (var i = 0; i < RULES.length; i++) {
+    set[RULES[i].label] = true;
+  }
+  set['Otros'] = true;
+  return set;
+}
 
 /** ¿Hay un disparador automático activo? */
 function isAutoEnabled() {
@@ -315,12 +324,15 @@ function isAutoEnabled() {
   return false;
 }
 
-/** Botón "Clasificar X correos recientes": procesa la bandeja ahora. */
+/** Botón "Clasificar la bandeja": procesa muchos correos de golpe. */
 function runBatchNow(e) {
-  var count = classifyInboxThreads(GmailApp.getInboxThreads(0, 50));
+  // Procesa hasta 200 hilos por tanda (con guarda de tiempo dentro del bucle).
+  var count = classifyInboxThreads(GmailApp.getInboxThreads(0, 200));
   return CardService.newActionResponseBuilder()
     .setNotification(
-      CardService.newNotification().setText('Listo: ' + count + ' correos etiquetados con reglas.')
+      CardService.newNotification().setText(
+        'Listo: ' + count + ' correos etiquetados y archivados. Vuelve a pulsar para procesar más.'
+      )
     )
     .build();
 }
@@ -339,7 +351,12 @@ function autoClassifyInbox() {
  */
 function classifyInboxThreads(threads) {
   var processed = 0;
+  var start = new Date().getTime();
+  var MAX_MS = 4.5 * 60 * 1000; // margen bajo el límite de 6 min de Apps Script.
+
   for (var i = 0; i < threads.length; i++) {
+    if (new Date().getTime() - start > MAX_MS) break; // no exceder el tiempo límite.
+
     var thread = threads[i];
     if (hasOrganizerLabel(thread)) continue;
 
@@ -355,6 +372,7 @@ function classifyInboxThreads(threads) {
 
     var label = GmailApp.getUserLabelByName(result.label) || GmailApp.createLabel(result.label);
     thread.addLabel(label);
+    thread.moveToArchive(); // archiva el hilo (lo saca de Inbox), igual que el modo individual.
     processed++;
   }
   return processed;
@@ -362,9 +380,10 @@ function classifyInboxThreads(threads) {
 
 /** ¿El hilo ya tiene una etiqueta del organizador? */
 function hasOrganizerLabel(thread) {
+  var known = organizerLabelSet();
   var labels = thread.getLabels();
   for (var i = 0; i < labels.length; i++) {
-    if (labels[i].getName().indexOf(BATCH_LABEL_PREFIX) === 0) return true;
+    if (known[labels[i].getName()]) return true;
   }
   return false;
 }

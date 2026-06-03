@@ -25,22 +25,22 @@ const MODEL = 'claude-haiku-4-5';
  * addon/Config.gs si quieres mostrar descripciones en la UI.
  */
 const CATEGORIES = [
-  { id: 'spam', label: 'Claude/Spam', description: 'Correo no deseado, phishing, estafas o mensajes masivos sospechosos.' },
-  { id: 'promociones', label: 'Claude/Promociones', description: 'Ofertas, descuentos, newsletters de marcas (ropa, tiendas, ecommerce) y publicidad.' },
-  { id: 'noticias', label: 'Claude/Noticias', description: 'Periódicos, boletines informativos, blogs y suscripciones de noticias.' },
-  { id: 'confirmaciones', label: 'Claude/Confirmaciones', description: 'Confirmaciones de pedidos, reservas, registros, códigos de verificación y recibos.' },
-  { id: 'finanzas', label: 'Claude/Finanzas', description: 'Bancos, facturas, estados de cuenta, pagos e impuestos.' },
-  { id: 'trabajo', label: 'Claude/Trabajo', description: 'Correo profesional, proyectos, reuniones y comunicación laboral.' },
-  { id: 'personal', label: 'Claude/Personal', description: 'Mensajes de personas conocidas, amigos y familia.' },
-  { id: 'redes_sociales', label: 'Claude/Redes Sociales', description: 'Notificaciones de redes sociales y plataformas de comunidad.' },
-  { id: 'viajes', label: 'Claude/Viajes', description: 'Vuelos, hoteles, reservas de viaje, tarjetas de embarque y alquiler de coches.' },
-  { id: 'envios', label: 'Claude/Envíos', description: 'Seguimiento de paquetes y avisos de paqueterías (en camino, en reparto, entregado).' },
-  { id: 'eventos', label: 'Claude/Eventos', description: 'Invitaciones de calendario, entradas a eventos, webinars y citas agendadas.' },
-  { id: 'educacion', label: 'Claude/Educación', description: 'Cursos, plataformas de aprendizaje, universidad y material educativo.' },
-  { id: 'salud', label: 'Claude/Salud', description: 'Citas médicas, farmacia, resultados de análisis y seguros de salud.' },
-  { id: 'suscripciones', label: 'Claude/Suscripciones', description: 'Renovaciones y avisos de servicios recurrentes (streaming, software, membresías).' },
-  { id: 'empleo', label: 'Claude/Empleo', description: 'Ofertas de empleo, procesos de selección y plataformas de reclutamiento.' },
-  { id: 'otros', label: 'Claude/Otros', description: 'Cualquier correo que no encaje claramente en las categorías anteriores.' },
+  { id: 'spam', label: 'Spam', description: 'Correo no deseado, phishing, estafas o mensajes masivos sospechosos.' },
+  { id: 'promociones', label: 'Promociones', description: 'Ofertas, descuentos, newsletters de marcas (ropa, tiendas, ecommerce) y publicidad.' },
+  { id: 'noticias', label: 'Noticias', description: 'Periódicos, boletines informativos, blogs y suscripciones de noticias.' },
+  { id: 'confirmaciones', label: 'Confirmaciones', description: 'Confirmaciones de pedidos, reservas, registros, códigos de verificación y recibos.' },
+  { id: 'finanzas', label: 'Finanzas', description: 'Bancos, facturas, estados de cuenta, pagos e impuestos.' },
+  { id: 'trabajo', label: 'Trabajo', description: 'Correo profesional, proyectos, reuniones y comunicación laboral.' },
+  { id: 'personal', label: 'Personal', description: 'Mensajes de personas conocidas, amigos y familia.' },
+  { id: 'redes_sociales', label: 'Redes Sociales', description: 'Notificaciones de redes sociales y plataformas de comunidad.' },
+  { id: 'viajes', label: 'Viajes', description: 'Vuelos, hoteles, reservas de viaje, tarjetas de embarque y alquiler de coches.' },
+  { id: 'envios', label: 'Envíos', description: 'Seguimiento de paquetes y avisos de paqueterías (en camino, en reparto, entregado).' },
+  { id: 'eventos', label: 'Eventos', description: 'Invitaciones de calendario, entradas a eventos, webinars y citas agendadas.' },
+  { id: 'educacion', label: 'Educación', description: 'Cursos, plataformas de aprendizaje, universidad y material educativo.' },
+  { id: 'salud', label: 'Salud', description: 'Citas médicas, farmacia, resultados de análisis y seguros de salud.' },
+  { id: 'suscripciones', label: 'Suscripciones', description: 'Renovaciones y avisos de servicios recurrentes (streaming, software, membresías).' },
+  { id: 'empleo', label: 'Empleo', description: 'Ofertas de empleo, procesos de selección y plataformas de reclutamiento.' },
+  { id: 'otros', label: 'Otros', description: 'Cualquier correo que no encaje claramente en las categorías anteriores.' },
 ];
 
 const CATEGORY_IDS = CATEGORIES.map((c) => c.id);
