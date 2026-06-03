@@ -100,6 +100,85 @@ var RULES = [
       'invitacion a reunion', 'tarea asignada',
     ],
   },
+  {
+    id: 'viajes',
+    label: 'Claude/Viajes',
+    senderPatterns: [
+      /(booking|despegar|expedia|airbnb|kayak|skyscanner|iberia|vueling|ryanair|latam|aeromexico|avianca|trivago|hotels?\.com|renfe|trip\.com)/i,
+    ],
+    keywords: [
+      'tarjeta de embarque', 'boarding pass', 'tu vuelo', 'reserva de hotel', 'check-in',
+      'itinerario', 'confirmación de vuelo', 'confirmacion de vuelo', 'localizador',
+      'alquiler de coche', 'tu reserva de viaje', 'vuelo de ida', 'vuelo de vuelta',
+    ],
+  },
+  {
+    id: 'envios',
+    label: 'Claude/Envíos',
+    senderPatterns: [/(dhl|fedex|ups|correos|seur|estafeta|mrw|usps|paquet|glovo|amazon\.logistics)/i],
+    keywords: [
+      'tu paquete', 'en camino', 'en reparto', 'ha sido entregado', 'número de seguimiento',
+      'numero de seguimiento', 'tracking', 'salió a reparto', 'salio a reparto',
+      'out for delivery', 'shipment', 'tu envío', 'tu envio', 'paquetería', 'paqueteria',
+    ],
+  },
+  {
+    id: 'eventos',
+    label: 'Claude/Eventos',
+    senderPatterns: [/(calendar|eventbrite|meetup|webinar|zoom\.us)/i],
+    keywords: [
+      'te ha invitado', 'invitación a', 'invitacion a', 'webinar', 'entradas para',
+      'tickets para', 'rsvp', 'se ha programado', 'añadir al calendario', 'anadir al calendario',
+      'recordatorio del evento', 'confirma tu asistencia',
+    ],
+  },
+  {
+    id: 'educacion',
+    label: 'Claude/Educación',
+    senderPatterns: [
+      /(coursera|udemy|edx|platzi|domestika|khanacademy|duolingo|university|universidad|campus|moodle|classroom)/i,
+    ],
+    keywords: [
+      'curso', 'lección', 'leccion', 'matrícula', 'matricula', 'inscripción', 'inscripcion',
+      'examen', 'calificación', 'calificacion', 'certificado', 'diploma', 'aprendizaje',
+      'tu progreso del curso', 'nueva clase',
+    ],
+  },
+  {
+    id: 'salud',
+    label: 'Claude/Salud',
+    senderPatterns: [/(clinic|clínica|clinica|hospital|farmacia|pharmacy|doctoralia|sanitas|adeslas|laboratorio)/i],
+    keywords: [
+      'cita médica', 'cita medica', 'resultados de', 'análisis', 'analisis', 'receta',
+      'consulta', 'seguro médico', 'seguro medico', 'vacuna', 'recordatorio de cita',
+      'tu salud', 'historial clínico', 'historial clinico',
+    ],
+  },
+  {
+    id: 'suscripciones',
+    label: 'Claude/Suscripciones',
+    senderPatterns: [
+      /(netflix|spotify|disney|hbo|max|primevideo|apple|icloud|adobe|microsoft|dropbox|notion|patreon)/i,
+    ],
+    keywords: [
+      'renovación', 'renovacion', 'tu suscripción', 'tu suscripcion', 'se renovará',
+      'se renovara', 'membresía', 'membresia', 'plan mensual', 'plan anual',
+      'facturación recurrente', 'facturacion recurrente', 'cancelar suscripción',
+      'cancelar suscripcion', 'subscription', 'tu plan',
+    ],
+  },
+  {
+    id: 'empleo',
+    label: 'Claude/Empleo',
+    senderPatterns: [
+      /(linkedin|indeed|glassdoor|infojobs|jobs|talent|recruiting|workday|greenhouse|lever)/i,
+    ],
+    keywords: [
+      'oferta de empleo', 'vacante', 'puesto', 'postulación', 'postulacion', 'tu candidatura',
+      'entrevista', 'reclutador', 'job opportunity', 'we are hiring', 'proceso de selección',
+      'proceso de seleccion', 'ofertas que coinciden',
+    ],
+  },
 ];
 
 /**

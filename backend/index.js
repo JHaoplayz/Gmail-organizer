@@ -33,6 +33,13 @@ const CATEGORIES = [
   { id: 'trabajo', label: 'Claude/Trabajo', description: 'Correo profesional, proyectos, reuniones y comunicación laboral.' },
   { id: 'personal', label: 'Claude/Personal', description: 'Mensajes de personas conocidas, amigos y familia.' },
   { id: 'redes_sociales', label: 'Claude/Redes Sociales', description: 'Notificaciones de redes sociales y plataformas de comunidad.' },
+  { id: 'viajes', label: 'Claude/Viajes', description: 'Vuelos, hoteles, reservas de viaje, tarjetas de embarque y alquiler de coches.' },
+  { id: 'envios', label: 'Claude/Envíos', description: 'Seguimiento de paquetes y avisos de paqueterías (en camino, en reparto, entregado).' },
+  { id: 'eventos', label: 'Claude/Eventos', description: 'Invitaciones de calendario, entradas a eventos, webinars y citas agendadas.' },
+  { id: 'educacion', label: 'Claude/Educación', description: 'Cursos, plataformas de aprendizaje, universidad y material educativo.' },
+  { id: 'salud', label: 'Claude/Salud', description: 'Citas médicas, farmacia, resultados de análisis y seguros de salud.' },
+  { id: 'suscripciones', label: 'Claude/Suscripciones', description: 'Renovaciones y avisos de servicios recurrentes (streaming, software, membresías).' },
+  { id: 'empleo', label: 'Claude/Empleo', description: 'Ofertas de empleo, procesos de selección y plataformas de reclutamiento.' },
   { id: 'otros', label: 'Claude/Otros', description: 'Cualquier correo que no encaje claramente en las categorías anteriores.' },
 ];
 

@@ -41,7 +41,11 @@ automáticamente usando la **API de Claude**. La clasificación se ejecuta en un
 ## Categorías por defecto
 
 Spam · Promociones · Noticias · Confirmaciones · Finanzas · Trabajo · Personal ·
-Redes Sociales · Otros. Se personalizan en `backend/index.js`.
+Redes Sociales · Viajes · Envíos · Eventos · Educación · Salud · Suscripciones ·
+Empleo · Otros.
+
+Se personalizan en `backend/index.js` (modo IA) y `addon/Rules.gs` (modo reglas).
+Mantén ambas listas sincronizadas si añades o quitas categorías.
 
 ## Despliegue rápido
 
