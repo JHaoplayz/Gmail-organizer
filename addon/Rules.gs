@@ -55,7 +55,9 @@ var RULES = [
   {
     id: 'confirmaciones',
     label: 'Claude/Confirmaciones',
-    senderPatterns: [/no-?reply/i, /confirm/i, /pedidos?@/i, /orders?@/i, /booking/i],
+    // OJO: no usamos /no-?reply/ porque casi todo correo automático lo lleva y
+    // ensuciaría esta categoría. Solo remitentes específicos de pedidos.
+    senderPatterns: [/pedidos?@/i, /orders?@/i, /receipts?@/i, /facturacion@/i],
     keywords: [
       'tu pedido', 'confirmación de pedido', 'confirmacion de pedido', 'order confirmation',
       'tu reserva', 'confirmación de reserva', 'confirmacion de reserva', 'has reservado',
@@ -71,11 +73,13 @@ var RULES = [
     label: 'Claude/Finanzas',
     senderPatterns: [
       /(bank|banco|bbva|santander|caixa|paypal|stripe|visa|mastercard|hacienda|sat)/i,
+      /(robinhood|coinbase|binance|kraken|etrade|fidelity|schwab|revolut|wise|n26|wealthsimple)/i,
     ],
     keywords: [
       'factura', 'estado de cuenta', 'movimiento', 'cargo', 'pago recibido',
       'pago pendiente', 'transferencia', 'saldo', 'impuesto', 'declaración',
-      'declaracion', 'invoice', 'payment', 'statement',
+      'declaracion', 'invoice', 'payment', 'statement', 'tu cartera', 'portfolio',
+      'acciones', 'dividendo', 'rendimiento', 'inversión', 'inversion', 'account statement',
     ],
   },
   {
@@ -136,7 +140,7 @@ var RULES = [
     id: 'educacion',
     label: 'Claude/Educación',
     senderPatterns: [
-      /(coursera|udemy|edx|platzi|domestika|khanacademy|duolingo|university|universidad|campus|moodle|classroom)/i,
+      /(coursera|udemy|edx|platzi|domestika|khanacademy|duolingo|datacamp|codecademy|pluralsight|freecodecamp|kaggle|university|universidad|campus|moodle|classroom)/i,
     ],
     keywords: [
       'curso', 'lección', 'leccion', 'matrícula', 'matricula', 'inscripción', 'inscripcion',
@@ -250,9 +254,11 @@ function classifyWithRulesEngine(content) {
  */
 function testRulesEngine() {
   var ejemplos = [
+    { subject: 'Nuevo curso de Python disponible', from: 'no-reply@datacamp.com', body: 'Sigue aprendiendo con DataCamp.' },
+    { subject: 'Tu informe mensual de inversiones', from: 'noreply@robinhood.com', body: 'Resumen de tu cartera y rendimiento.' },
+    { subject: 'Alerta de seguridad', from: 'no-reply@accounts.google.com', body: 'Actividad nueva en tu cuenta de Google.' },
     { subject: '50% de descuento solo hoy', from: 'ofertas@zara.com', body: 'Aprovecha nuestras rebajas en ropa.' },
     { subject: 'Tu paquete está en camino', from: 'noreply@dhl.com', body: 'Número de seguimiento: 123. Salió a reparto.' },
-    { subject: 'Estado de cuenta de mayo', from: 'avisos@bbva.com', body: 'Consulta tu factura y movimientos.' },
     { subject: 'Tu suscripción se renovará', from: 'info@netflix.com', body: 'Tu plan mensual se renovará pronto.' },
     { subject: 'Hola, ¿comemos el sábado?', from: 'amigo@gmail.com', body: 'Te escribo para vernos.' },
   ];
